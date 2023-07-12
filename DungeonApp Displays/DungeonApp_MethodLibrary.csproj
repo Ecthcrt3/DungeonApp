@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>DungeonApp_Displays</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DungeonApp_ClassLibrary\DungeonApp_ClassLibrary.csproj" />
+    <ProjectReference Include="..\Interfaces\DungeonApp_Interfaces.csproj" />
+  </ItemGroup>
+
+</Project>
