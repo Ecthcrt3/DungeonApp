@@ -10,29 +10,30 @@ namespace DungeonApp_ClassLibrary
     {
         public int Damage { get; set; }
         public int AttackSpeed { get; set; }
-
-        public Weapon(string name, int dmg, int atkspd, string description,int itemNumber):base(name, description,itemNumber)
+        public int Price { get; set; }
+        public Weapon(string name, int dmg, int atkspd, string description,int itemNumber, int price):base(name, description,itemNumber)
         {
             Damage = dmg;
             AttackSpeed = atkspd;
+            Price = price;
         }
 
         public override string ToString()
         {
-            return Name;
+            return $"{Name}: {Description} Price: {Price} gold";
         }
 
         public static Weapon WeaponList(int index)
         {
             List<Weapon> weaponList = new List<Weapon>();
 
-            weaponList.Add(new Weapon("Dagger", 1, 20, "Daggers do very little damage but attack rapidly", 001));
-            weaponList.Add(new Weapon("Sword", 2, 15, "Swords deal Moderate damage at a fast pace", 002));
-            weaponList.Add(new Weapon("Axe", 3, 14, "Axes deal average damage at an average pace", 003));
-            weaponList.Add(new Weapon("Club", 2, 12, "Great Axes deal Massive Damage but attack Very slowly", 004));
+            weaponList.Add(new Weapon("Dagger", 1, 50, "Daggers do very little damage but attack rapidly", 001, 1));
+            weaponList.Add(new Weapon("Sword", 2, 40, "Swords deal Moderate damage at a fast pace", 002, 2));
+            weaponList.Add(new Weapon("Axe", 3, 35, "Axes deal average damage at an average pace", 003, 2));
+            weaponList.Add(new Weapon("Club", 2, 30, "Great Axes deal Massive Damage but attack Very slowly", 004, 1));
 
-            weaponList.Add(new Weapon("Long Sword", 4, 10, "Long Swords deal heavy Damage but attack more slowly", 005));
-            weaponList.Add(new Weapon("Great Axe", 5, 8, "Great Axes deal Massive Damage but attack Very slowly", 006));
+            weaponList.Add(new Weapon("Long Sword", 4, 15, "Long Swords deal heavy Damage but attack more slowly", 005, 5));
+            weaponList.Add(new Weapon("Great Axe", 5, 10, "Great Axes deal Massive Damage but attack Very slowly", 006, 6));
 
             return weaponList[index -1];
         }

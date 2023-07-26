@@ -8,6 +8,7 @@ namespace DungeonApp_Interfaces
 {
     public class CombatManager
     {
+        public static string combatStatus;
         public static bool CalculateHit(ICombatable attacker, ICombatable target)
         {
             return attacker.MakeAttack() > target.GetDefense();
@@ -16,6 +17,10 @@ namespace DungeonApp_Interfaces
         public static bool CalculateRun(ICombatable runner, ICombatable attacker)
         {
             return true;
+        }
+        public static bool TakeTurn(ICombatable character)
+        {
+            return character.AttackReady();
         }
     }
 }

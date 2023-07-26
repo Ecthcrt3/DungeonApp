@@ -15,8 +15,8 @@
             get { return _health; }
             set
             {
-                if (Health > MaxHealth) { _health = MaxHealth; }
-                else { _health = Health; }
+                if (value > MaxHealth) { _health = MaxHealth; }
+                else { _health = value; }
             }
         }
         public Character()
@@ -34,8 +34,8 @@
             MaxHealth = maxHealth;
             Attack = attack;
             Defense = defense;
-            Health = maxHealth;
             AttackCoolDown = 0;
+            IsAlive = true;
         }
 
         public virtual string ToString()

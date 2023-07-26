@@ -55,7 +55,7 @@ namespace DungeonApp_MethodLibrary
                     NextFloor(player);
                     break;
                 case '2':
-                    //shop
+                    Displays.Shop(player, Weapon.WeaponList(new Random().Next(1, 7)));
                     break;
                 case '3':
                     Displays.HealInfo(player);
@@ -83,46 +83,84 @@ namespace DungeonApp_MethodLibrary
         public static void Combat(Player player)
         {
             Enemy enemy = player.currentFloor.Enemy;
+            bool pause = false;
             do
             {
-                bool validInput = false;
-                char userInput = Console.ReadKey().KeyChar;
-                Console.Clear();
+                bool validInput = true;
                 do
                 {
-                    switch (userInput)
+                Console.Clear();
+                Displays.MonsterRoom(player, enemy, player.AttackCoolDown>= 100);
+                if (pause) { 
+                        Thread.Sleep(1000);
+                        CombatManager.combatStatus = "";
+                    }
+                    if (CombatManager.TakeTurn(player)) {
+                        char userInput = Console.ReadKey().KeyChar; 
+                        switch (userInput)
+                        {
+                            case '1':
+                                if (CombatManager.CalculateHit(player, enemy))
+                                {
+                                    CombatManager.combatStatus = $"You attack the {enemy.Name} for {player.GetDamage()} points of damage";
+                                    enemy.TakeDamage(player.GetDamage());
+                                }
+                                else
+                                {
+                                    CombatManager.combatStatus = $"You attacked the {enemy.Name} but missed!";
+                                }
+                                pause = true;
+                                break;
+                            case '2':
+                                if (CombatManager.CalculateRun(player, enemy))
+                                {
+                                    player.currentFloor.Number = player.currentFloor.LastSafeFloor;
+                                    player.currentFloor.Description1 = $"Floor {player.currentFloor.Number}: This is a safe floor to purchase items and heal";
+                                    player.currentFloor.Description2 = " ";
+                                    player.IsSafe = true;
+                                    player.InCombat = false;
+                                }
+                                break;
+                            case '3':
+                                player.IsExiting = true;
+                                break;
+                            default:
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Input not recognized please try again. . . ");
+                                Console.ResetColor();
+                                validInput = false;
+                                break;
+                        }
+                    }
+                    if(enemy.IsAlive && CombatManager.TakeTurn(enemy))
                     {
-                        case '1':
-                            if (CombatManager.CalculateHit(player, enemy))
-                            {
-                                enemy.TakeDamage(player.GetDamage());
-                            }
-                            break;
-                        case '2':
-                            if(CombatManager.CalculateRun(player, enemy))
-                            {
-                                player.currentFloor.Number = player.currentFloor.LastSafeFloor;
-                                player.currentFloor.Description1 = $"Floor {player.currentFloor.Number}: This is a safe floor to purchase items and heal";
-                                player.currentFloor.Description2 = " ";
-                                player.IsSafe = true;
-                                player.InCombat = false;
-                            }
-                            break;
-                        case '3':
-                            player.IsExiting = true;
-                            break;
-                        default:
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Input not recognized please try again. . . ");
-                            Console.ResetColor();
-                            break;
+                        if(CombatManager.CalculateHit(enemy, player))
+                        {
+                            CombatManager.combatStatus = $"The {enemy.Name} attacked you and dealt {enemy.GetDamage()} points of damage";
+                            player.TakeDamage(enemy.GetDamage());
+                        }
+                        else
+                        {
+                            CombatManager.combatStatus = $"The {enemy.Name} attacked you but missed!";
+                        }
+                        pause = true;
                     }
                 } while (!validInput);
             } while (player.IsAlive && enemy.IsAlive);
             if (!enemy.IsAlive)
             {
-                player.Money += 1;
+                Console.Clear();
+                Displays.CombatSuccess(player, enemy);
+                player.Money += enemy.Reward_Money * (player.currentFloor.Number/5 + 1);
+                player.GetXP(enemy.Reward_XP);
                 player.InCombat = false;
+                Thread.Sleep(1000);
+            }
+            if (!player.IsAlive)
+            {
+                Console.Clear();
+                Displays.CombatFail(player, enemy);
+                Thread.Sleep(1000);
             }
         }
 
@@ -140,7 +178,7 @@ namespace DungeonApp_MethodLibrary
             {
                 Random rand = new Random();
                 string[] colors = { "red", "green", "blue", "orange", "yellow", "purple" };
-                string[] decorations = { "bones", "blood", "broken weapons", "corpses", "bugs" };
+                string[] decorations = { "bones", "blood and guts", "broken weapons", "corpses", "bugs" };
                 player.currentFloor.Description1 = $"Floor {player.currentFloor.Number}: This is a {rand.Next(10, 50)}ft.x{rand.Next(10, 50)}ft. room with {rand.Next(10, 20)}ft. tall ceilings";
                 player.currentFloor.Description2 = $" The walls are painted {colors[rand.Next(0, 6)]} and there are {decorations[rand.Next(0, 5)]} all over the floor";
                 player.IsSafe = false;
